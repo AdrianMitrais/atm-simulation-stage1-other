@@ -22,10 +22,7 @@ public class InputValidationUtils {
     }
 
 
-    public static Account doesAccountExists(String accountNumber, String pin, List<Account> accountList) {
-        return accountList.stream().filter(account -> accountNumber.equals(account.getAccountNumber()) &&
-                pin.equals(account.getPin())).findAny().orElse(null);
-    }
+
 
     public static boolean isInputLengthValid(String input) {
         return input.length() != VALID_INPUT_LENGTH;

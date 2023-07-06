@@ -24,4 +24,19 @@ public class AccountUtils {
         accountList.add(accountTwo);
         return accountList;
     }
+
+    public static Account doesAccountExists(String accountNumber, String pin, List<Account> accountList) {
+        return accountList.stream().filter(account -> accountNumber.equals(account.getAccountNumber()) &&
+                pin.equals(account.getPin())).findAny().orElse(null);
+    }
+
+    public static boolean doesAccountExistsByNumber(String accountNumber, List<Account> accountList) {
+        return accountList.stream().anyMatch(account -> accountNumber.equals(account.getAccountNumber()));
+    }
+
+    public static Account getAccountByNumber(String accountNumber, List<Account> accountList) {
+        return accountList.stream()
+                .filter(account -> accountNumber.equals(account.getAccountNumber()))
+                .findAny().orElse(null);
+    }
 }

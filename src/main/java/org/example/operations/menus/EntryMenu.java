@@ -5,15 +5,14 @@ import org.example.operations.account.AccountUtils;
 import org.example.operations.utils.InputValidationUtils;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 public class EntryMenu {
     private static final String ACCOUNT_NUMBER = "Account Number";
     private static final String PIN = "PIN";
 
-    public static void displayMenu() {
-        List<Account> accountList = AccountUtils.generateAccounts();
+    public static void displayMenu(List<Account> accountList) {
+        greetings();
         String accountNumber;
         String pin;
         Scanner scanner = new Scanner(System.in);
@@ -27,9 +26,9 @@ public class EntryMenu {
                 System.out.println("Enter PIN");
                 pin = scanner.next();
                 if (validateInput(pin, PIN)) {
-                    Account accountMatch = InputValidationUtils.doesAccountExists(accountNumber, pin, accountList);
+                    Account accountMatch = AccountUtils.doesAccountExists(accountNumber, pin, accountList);
                     if(accountMatch != null) {
-                        MainMenu.displayMenus(accountMatch, scanner);
+                        MainMenu.displayMenus(accountMatch, scanner, accountList);
                         operationFinished = true;
                     } else {
                         System.out.println("Invalid Account Number/PIN");
