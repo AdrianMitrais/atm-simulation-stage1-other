@@ -1,11 +1,15 @@
 package org.example.operations.menus;
 
 import org.example.model.Account;
+import org.example.model.TransactionHistory;
 import org.example.operations.account.AccountUtils;
+import org.example.operations.utils.ConstantsUtils;
 import org.example.operations.utils.InputValidationUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -42,8 +46,13 @@ public class SummaryMenu {
         accountList.get(index).setBalance(finalBalance);
         transferDetails.put("balance", finalBalance.toString());
 
+
         Account destinationAccount = AccountUtils.getAccountByNumber(transferDetails.get("destinationNumber"), accountList);
-        accountList.get(accountList.indexOf(destinationAccount)).setBalance(destinationAccount.getBalance() + transferAmount);
+        Integer destinationAccountNewBalance = destinationAccount.getBalance() + transferAmount;
+        accountList.get(accountList.indexOf(destinationAccount)).setBalance(destinationAccountNewBalance);
+
+        addOutgoingTransactionHistory(transferAmount, destinationAccount.getAccountNumber(), account, accountList);
+        addIncomingTransactionHistory(transferAmount, account.getAccountNumber(), destinationAccount, accountList);
 
         String[] options = {"1. Transaction", "2. Exit"};
         accountSummaryAfterTransfer(scanner, transferDetails);
@@ -90,4 +99,34 @@ public class SummaryMenu {
         }
         System.out.print("Choose Option: ");
     }
+
+    private static void addOutgoingTransactionHistory(int transferAmount, String destination, Account originAccount, List<Account> accountList) {
+        List<TransactionHistory> transactionHistories = originAccount.getTransactionHistory() == null
+                || originAccount.getTransactionHistory().isEmpty() ? new ArrayList<>() : originAccount.getTransactionHistory();
+        TransactionHistory newHistory = new TransactionHistory();
+
+        int accountIndex = accountList.indexOf(originAccount);
+        newHistory.setAmount("-" + transferAmount);
+        newHistory.setTransactionDate(LocalDate.now().toString());
+        newHistory.setTransactionType(ConstantsUtils.TRANSFER_OUTGOING);
+        newHistory.setDestination(destination);
+        transactionHistories.add(newHistory);
+        accountList.get(accountIndex).setTransactionHistory(transactionHistories);
+        originAccount.setTransactionHistory(transactionHistories);
+    }
+
+    private static void addIncomingTransactionHistory(int transferAmount, String origin, Account destinationAccount, List<Account> accountList) {
+        List<TransactionHistory> transactionHistories = destinationAccount.getTransactionHistory() == null
+                || destinationAccount.getTransactionHistory().isEmpty() ? new ArrayList<>() : destinationAccount.getTransactionHistory();
+        TransactionHistory newHistory = new TransactionHistory();
+        int accountIndex = accountList.indexOf(destinationAccount);
+        newHistory.setAmount("+" + transferAmount);
+        newHistory.setTransactionDate(LocalDate.now().toString());
+        newHistory.setTransactionType(ConstantsUtils.TRANSFER_INCOMING);
+        newHistory.setOrigin(origin);
+        transactionHistories.add(newHistory);
+        accountList.get(accountIndex).setTransactionHistory(transactionHistories);
+        destinationAccount.setTransactionHistory(transactionHistories);
+    }
+
 }

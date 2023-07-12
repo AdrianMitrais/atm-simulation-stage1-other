@@ -1,9 +1,11 @@
 package org.example.operations.menus;
 
 import org.example.model.Account;
+import org.example.model.TransactionHistory;
 import org.example.operations.account.AccountUtils;
 import org.example.operations.utils.InputValidationUtils;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class FundTransferMenu {
@@ -39,7 +41,7 @@ public class FundTransferMenu {
         String optionSelect = scanner.next();
         switch (optionSelect) {
             case "1":
-                if (isTransactionValid(AccountUtils.generateAccounts(), account, transferDetails)) {
+                if (isTransactionValid(accountList, account, transferDetails)) {
                     SummaryMenu.displayTransferSummaryMenu(scanner, transferDetails, account, accountList);
                 } else {
                     MainMenu.displayMenus(account, scanner, accountList);
@@ -111,7 +113,6 @@ public class FundTransferMenu {
                 "ReferenceNumber     : " + transferDetails.get("referenceNumber") + "\n";
         System.out.println(transferConfirmation);
     }
-
 
 
 

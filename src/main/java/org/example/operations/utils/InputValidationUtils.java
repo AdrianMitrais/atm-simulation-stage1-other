@@ -22,8 +22,6 @@ public class InputValidationUtils {
     }
 
 
-
-
     public static boolean isInputLengthValid(String input) {
         return input.length() != VALID_INPUT_LENGTH;
     }

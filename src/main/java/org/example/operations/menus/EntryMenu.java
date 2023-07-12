@@ -4,6 +4,7 @@ import org.example.model.Account;
 import org.example.operations.account.AccountUtils;
 import org.example.operations.utils.InputValidationUtils;
 
+import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Scanner;
 
@@ -19,19 +20,23 @@ public class EntryMenu {
         int falseCount = 0;
         Boolean operationFinished = false;
         while(!operationFinished) {
-
             System.out.println("Enter Account Number");
             accountNumber = scanner.next();
-            if (validateInput(accountNumber, ACCOUNT_NUMBER)) {
-                System.out.println("Enter PIN");
-                pin = scanner.next();
-                if (validateInput(pin, PIN)) {
-                    Account accountMatch = AccountUtils.doesAccountExists(accountNumber, pin, accountList);
-                    if(accountMatch != null) {
-                        MainMenu.displayMenus(accountMatch, scanner, accountList);
+            if("exit".equalsIgnoreCase(accountNumber)) {
+                operationFinished = true;
+            } else {
+                if (validateInput(accountNumber, ACCOUNT_NUMBER)) {
+                    System.out.println("Enter PIN");
+                    pin = scanner.next();
+                    if (validateInput(pin, PIN)) {
+                        Account accountMatch = AccountUtils.doesAccountExists(accountNumber, pin, accountList);
+                        if(accountMatch != null) {
+                            MainMenu.displayMenus(accountMatch, scanner, accountList);
+                        } else {
+                            System.out.println("Invalid Account Number/PIN");
+                        }
+                    } else if ("exit".equalsIgnoreCase(accountNumber)) {
                         operationFinished = true;
-                    } else {
-                        System.out.println("Invalid Account Number/PIN");
                     }
                 }
             }

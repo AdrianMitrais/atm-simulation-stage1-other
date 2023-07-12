@@ -1,15 +1,17 @@
 package org.example.operations.menus;
 
 import org.example.model.Account;
+import org.example.model.TransactionHistory;
+import org.example.operations.utils.ConstantsUtils;
 import org.example.operations.utils.InputValidationUtils;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class WithdrawMenu {
-    private static final Integer TEN_QUIDS = 10;
-    private static final Integer FIFTY_QUIDS = 50;
-    private static final Integer HUNDRED_QUIDS = 100;
+
     public static void displayMenus(Scanner scanner, Account account, List<Account> accountList) {
         String[] options = {"1. $10", "2. $50", "3. $100", "4. Other", "5. Back"};
         printMenus(options);
@@ -18,22 +20,25 @@ public class WithdrawMenu {
         int newBalance = 0;
         switch (selectMenu) {
             case "1" -> {
-                newBalance = calculateBalance(TEN_QUIDS, account.getBalance());
+                newBalance = calculateBalance(ConstantsUtils.TEN_QUIDS, account.getBalance());
                 account.setBalance(newBalance);
                 accountList.get(index).setBalance(newBalance);
-                SummaryMenu.displayWithdrawalSummaryMenu(TEN_QUIDS, account, scanner, accountList);
+                addTransactionHistory(ConstantsUtils.TEN_QUIDS, account, accountList);
+                SummaryMenu.displayWithdrawalSummaryMenu(ConstantsUtils.TEN_QUIDS, account, scanner, accountList);
             }
             case "2" -> {
-                newBalance = calculateBalance(FIFTY_QUIDS, account.getBalance());
+                newBalance = calculateBalance(ConstantsUtils.FIFTY_QUIDS, account.getBalance());
                 account.setBalance(newBalance);
                 accountList.get(index).setBalance(newBalance);
-                SummaryMenu.displayWithdrawalSummaryMenu(FIFTY_QUIDS, account, scanner, accountList);
+                addTransactionHistory(ConstantsUtils.FIFTY_QUIDS, account, accountList);
+                SummaryMenu.displayWithdrawalSummaryMenu(ConstantsUtils.FIFTY_QUIDS, account, scanner, accountList);
             }
             case "3" -> {
-                newBalance = calculateBalance(HUNDRED_QUIDS, account.getBalance());
+                newBalance = calculateBalance(ConstantsUtils.HUNDRED_QUIDS, account.getBalance());
                 account.setBalance(newBalance);
                 accountList.get(index).setBalance(newBalance);
-                SummaryMenu.displayWithdrawalSummaryMenu(HUNDRED_QUIDS, account, scanner, accountList);
+                addTransactionHistory(ConstantsUtils.HUNDRED_QUIDS, account, accountList);
+                SummaryMenu.displayWithdrawalSummaryMenu(ConstantsUtils.HUNDRED_QUIDS, account, scanner, accountList);
             }
             case "4" -> otherWithdrawalMenus(account, scanner, accountList);
             case "5" -> MainMenu.displayMenus(account, scanner, accountList);
@@ -69,7 +74,23 @@ public class WithdrawMenu {
         int newBalance = calculateBalance(withdrawAmount, accountBalance);
         account.setBalance(newBalance);
         accountList.get(index).setBalance(newBalance);
+        addTransactionHistory(withdrawAmount, account, accountList);
         SummaryMenu.displayWithdrawalSummaryMenu(withdrawAmount, account, scanner, accountList);
 
+    }
+
+    private static void addTransactionHistory(int withdrawAmmount, Account account, List<Account> accountList) {
+        List<TransactionHistory> transactionHistories = account.getTransactionHistory() == null
+                || account.getTransactionHistory().isEmpty() ? new ArrayList<>() : account.getTransactionHistory();
+
+        TransactionHistory newHistory = new TransactionHistory();
+        int accountIndex = accountList.indexOf(account);
+        newHistory.setAmount("-" + withdrawAmmount);
+        newHistory.setTransactionDate(LocalDate.now().toString());
+        newHistory.setTransactionType(ConstantsUtils.WITHDRAWAL);
+
+        transactionHistories.add(newHistory);
+        accountList.get(accountIndex).setTransactionHistory(transactionHistories);
+        account.setTransactionHistory(transactionHistories);
     }
 }
